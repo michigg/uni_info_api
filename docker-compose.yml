@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  uni_info_api:
+    image: uni_info_api:0.1
+    build: .
+    ports:
+      - 8282:80
+    env_file:
+      - .env_example
+
+  redis:
+    image: redis:5.0.6-alpine3.10
+    command: --appendonly yes
+    volumes:
+      - ./data/redis:/data

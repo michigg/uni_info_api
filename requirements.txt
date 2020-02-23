@@ -1,0 +1,12 @@
+Flask==1.1.1
+flask-restful
+Werkzeug==0.16.0
+xmltodict==0.12.0
+requests==2.22.0
+Flask-Caching==1.7.2
+Flask-RestPlus==0.13.0
+redis==3.3.11
+PyPDF2==1.26.0
+camelot-py[cv]==0.7.3
+beautifulsoup4==4.8.2
+celery==4.4.0
