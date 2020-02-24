@@ -87,6 +87,35 @@ class UniInfoParser(PDFBasicParser):
     def _iso_date(self, pdf_date: str):
         return datetime.strptime(pdf_date, "%d.%m.%Y").strftime("%Y-%m-%d")
 
+    def is_lecture_time(self, uni_infos):
+        lecture_times = uni_infos["lecture_times"]
+        lecture_end_date = datetime.strptime(lecture_times[1], "%Y-%m-%d").date()
+        lecture_start_date = datetime.strptime(lecture_times[0], "%Y-%m-%d").date()
+        today = datetime.today().date()
+        # today = datetime.strptime("2019-12-25", "%Y-%m-%d").date()
+
+        return self.is_in_date_range(lecture_start_date, lecture_end_date, today)
+
+    def is_free_time(self, uni_infos):
+        lecture_free_times = uni_infos["lecture_free_times"]
+        is_free = False
+        today = datetime.today().date()
+        # today = datetime.strptime("2019-12-25", "%Y-%m-%d").date()
+        for time in lecture_free_times:
+            if len(time) == 2:
+                free_start = datetime.strptime(time[0], "%Y-%m-%d").date()
+                free_end = datetime.strptime(time[1], "%Y-%m-%d").date()
+                is_free = self.is_in_date_range(free_start, free_end, today)
+            else:
+                free_date = datetime.strptime(time[0], "%Y-%m-%d").date()
+                if free_date == today:
+                    is_free = True
+        return is_free
+
+    def is_in_date_range(self, start_date: datetime.date, end_date: datetime.date,
+                         to_proof_date: datetime.date) -> bool:
+        return start_date <= to_proof_date <= end_date
+
 
 if "__main__" == __name__:
     parser = UniInfoParser()

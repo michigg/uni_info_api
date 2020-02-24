@@ -1,3 +1,5 @@
+import datetime
+
 import camelot
 from celery import Celery
 from flask import Flask, request, jsonify
@@ -61,7 +63,15 @@ class OpeningsApi(Resource):
         """
         returns Building Opening Hours
         """
-        return jsonify(opening_hours.get_opening_hours())
+        uni_info_parser.save_info_data()
+        uni_infos = uni_info_parser.get_info()
+        if "lecture_times" in uni_infos:
+            data = opening_hours.get_opening_hours()
+            if not uni_info_parser.is_lecture_time(uni_infos):
+                return jsonify({"opening_hours": data["openings"], "source": data["source"]})
+            else:
+                return jsonify({"opening_hours": data["openings_during_lectures"], "source": data["source"]})
+        return jsonify([])
 
 
 @cache.cached(timeout=config.CACHE_DURATION_INFO)
@@ -74,6 +84,22 @@ class InfoApi(Resource):
         """
         uni_info_parser.save_info_data()
         return jsonify(uni_info_parser.get_info())
+
+
+# @cache.cached(timeout=config.CACHE_DURATION_INFO)
+@api.route(f'{config.API_V1_ROOT}info/today/')
+class InfoTodayApi(Resource):
+
+    def get(self):
+        """
+        returns university bool informations free day, lecture day
+        """
+        uni_info_parser.save_info_data()
+        uni_infos = uni_info_parser.get_info()
+        if "lecture_times" in uni_infos:
+            return jsonify({"is_lecture_day": uni_info_parser.is_lecture_time(uni_infos=uni_infos),
+                            "is_free_day": uni_info_parser.is_free_time(uni_infos=uni_infos),
+                            "source": uni_info_parser.url})
 
 
 @cache.cached(timeout=config.CACHE_DURATION_EXAM_PDF, key_prefix='exam_appointments_download')
