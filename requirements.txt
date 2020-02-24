@@ -1,4 +1,5 @@
 Flask==1.1.1
+Flask-Cors==3.0.8
 flask-restful
 Werkzeug==0.16.0
 xmltodict==0.12.0

@@ -1,6 +1,7 @@
 import camelot
 from celery import Celery
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from flask_restplus import Api, Resource
 
 import config
@@ -13,6 +14,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 if config.PROD_MODE:
     cache.init_app(app, config={'CACHE_TYPE': 'redis', 'CACHE_REDIS_URL': config.CACHE_REDIS_URL})
