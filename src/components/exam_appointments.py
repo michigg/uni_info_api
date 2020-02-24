@@ -68,16 +68,30 @@ class ExamParser(PDFBasicParser):
         if pattern.findall(row["0"]) and (
                 "entfällt" not in str(row["2"]).lower() or "entfällt" not in str(row["1"]).lower()):
             duration = self._get_duration(row)
+            building_key, level, number = self._get_univis_room_parts(row["2"])
             return {
                 "date": datetime.strptime(row["0"], "%d.%m.%y").strftime("%Y-%m-%d"),
                 "time": row["1"],
-                "room": row["2"], "type": row["3"],
+                "room": {"short": row["2"], "building_key": building_key, "level": level, "number": number},
+                "type": row["3"],
                 "degree": row["4"], "short": row["5"],
                 "lecture": row["6"],
                 "minutes_duration": duration,
                 "chair": row["7"],
             }
         return None
+
+    # Copied from univis api UnivisRoom
+    def _get_univis_room_parts(exam_room) -> (str, int, int) or (None, None, None):
+        if "/" in exam_room:
+            splitted_room_id = str(exam_room).split('/')
+            splitted_room_number = splitted_room_id[1].split('.')
+            building_key = splitted_room_id[0]
+            level = int(splitted_room_number[0])
+            number = int(splitted_room_number[1])
+            return building_key, level, number
+        else:
+            return (None, None, None)
 
     def _load_json_table(self, dir: str, table_json_file_name: str):
         with open(f'{dir}/{table_json_file_name}', "r") as f:
