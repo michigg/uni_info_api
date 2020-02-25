@@ -16,7 +16,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 if config.PROD_MODE:
     cache.init_app(app, config={'CACHE_TYPE': 'redis', 'CACHE_REDIS_URL': config.CACHE_REDIS_URL})
@@ -32,6 +31,8 @@ app.config['CELERY_RESULT_BACKEND'] = config.CELERY_REDIS_URL
 
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
+
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 examParser = ExamParser()
 opening_hours = OpeningHours()
