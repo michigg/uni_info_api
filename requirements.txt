@@ -10,4 +10,4 @@ redis==3.3.11
 PyPDF2==1.26.0
 camelot-py[cv]==0.7.3
 beautifulsoup4==4.8.2
-celery==4.4.0
+celery==5.2.2
