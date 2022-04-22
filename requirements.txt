@@ -7,7 +7,7 @@ requests==2.22.0
 Flask-Caching==1.7.2
 Flask-RestPlus==0.13.0
 redis==3.3.11
-PyPDF2==1.26.0
+PyPDF2==1.27.5
 camelot-py[cv]==0.7.3
 beautifulsoup4==4.8.2
 celery==4.4.0
